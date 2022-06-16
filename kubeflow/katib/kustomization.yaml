@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-#- https://git.k3.acornsoft.io/ohs/argoflow-01/external/katib/manifests/v1beta1/installs/katib-with-kubeflow
+#- https://github.com/kongrtan/kubeflow/external/katib/manifests/v1beta1/installs/katib-with-kubeflow
 #- https://git.k3.acornsoft.io/ohs/katib/manifests/v1beta1/installs/katib-with-kubeflow
 - github.com/kubeflow/katib/manifests/v1beta1/installs/katib-with-kubeflow?ref=v.0.11.1
 #- ./manifests/v1beta1/installs/katib-with-kubeflow

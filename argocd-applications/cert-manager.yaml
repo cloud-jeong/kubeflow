@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://git.k3.acornsoft.io/ohs/argoflow-01
+    repoURL: https://github.com/kongrtan/kubeflow
     targetRevision: HEAD
     path: cert-manager
     kustomize:
