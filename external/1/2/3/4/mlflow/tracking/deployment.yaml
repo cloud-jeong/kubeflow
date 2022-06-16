@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mlflow-tracking
+  name: mlflow-tracking
+  namespace: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-tracking
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: mlflow-tracking
+    spec:
+      containers:
+      - name: mlflow-tracking
+        image: regi.k3.acornsoft.io/k3lab/jupyterlab-tf-cpu:3.6-4
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-pgsql-secrets
+              key: POSTGRES_PASSWORD
+        command:
+        - "/bin/bash"
+        - "-c"
+        - "mlflow server --backend-store-uri postgresql://postgres:${POSTGRES_PASSWORD}@mlflow-pgsql/postgres --host=0.0.0.0 --default-artifact-root /home/jovyan/artifacts"
+
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: data
+          mountPath: /home/jovyan
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: mlflow-data

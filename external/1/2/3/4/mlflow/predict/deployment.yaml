@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mlflow-predict
+  name: mlflow-predict
+  namespace: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-predict
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: mlflow-predict
+    spec:
+      containers:
+      - name: mlflow-predict
+        image: regi.k3.acornsoft.io/k3lab/jupyterlab-tf-cpu:3.6-4
+        ports:
+        - name: svcport
+          containerPort: 1234
+        env:
+        - name: MLFLOW_TRACKING_URI
+          value: http://mlflow-tracking:5000
+        - name: RUN_ID
+          value: d4fa2fa4e87d470a8e8eba81812cc473
+        - name: MODEL
+          value: keras-model
+        command:
+        - "/bin/bash"
+        - "-c"
+        - "mlflow models serve -m runs:/${RUN_ID}/${MODEL} --no-conda --port 1234"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: data
+          mountPath: /home/jovyan
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: mlflow-data

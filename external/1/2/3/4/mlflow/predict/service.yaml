@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow-predict
+  namespace: mlflow
+  labels:
+    app: mlflow-predict
+spec:
+  type: NodePort
+  ports:
+  - port: 1234
+    nodePort: 32204
+    protocol: TCP
+    name: predict
+  selector:
+    app: mlflow-predict

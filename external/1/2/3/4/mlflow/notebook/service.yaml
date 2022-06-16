@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow-notebook
+  namespace: mlflow
+  labels:
+    app: mlflow-notebook
+spec:
+  type: NodePort
+  ports:
+  - port: 8888
+    nodePort: 32201
+    protocol: TCP
+    name: notebook
+  selector:
+    app: mlflow-notebook

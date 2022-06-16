@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mlflow-pgsql
+  namespace: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-pgsql
+  serviceName: mlflow-pgsql
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: mlflow-pgsql
+    spec:
+      containers:
+      - name: mlflow-pgsql
+        image: postgres:12.7-alpine3.14
+        imagePullPolicy: Always
+        ports:
+        - name: dbapi
+          containerPort: 5432
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-pgsql-secrets
+              key: POSTGRES_PASSWORD
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+#        readinessProbe:
+#          httpGet:
+#            path: /
+#            port: 8081
+#      securityContext:
+#        fsGroup: 111
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: mlflow-pgsql

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: pgadmin
+  name: pgadmin
+  namespace: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  key: PGADMIN_DEFAULT_EMAIL
+                  name: secret-pgadmin
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: PGADMIN_DEFAULT_PASSWORD
+                  name: secret-pgadmin
+            - name: PGADMIN_LISTEN_PORT
+              value: "4888"
+          image: dpage/pgadmin4:4.24
+          imagePullPolicy: Always
+          name: pgadmin
+          resources:
+            limits:
+              cpu: 200m
+              memory: "209715200"
+            requests:
+              cpu: 100m
+              memory: "104857600"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow-pgsql
+  namespace: mlflow
+  labels:
+    app: mlflow-pgsql
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    protocol: TCP
+    name: dbapi
+  selector:
+    app: mlflow-pgsql

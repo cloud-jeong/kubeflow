@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  url: https://192.168.77.204:32384
+  dex.config: |
+    connectors:
+      # GitHub enterprise example
+      - type: gitlab
+        id: gitlab
+        name: GitLab
+        config:
+          baseURL: https://git.k3.acornsoft.io
+          clientID: d1ae7d96437b41cf0de4b56bc03d2f7e35fe78649bc8dd46ad6449d3beec0cec
+          clientSecret: b114073b7324fb3af29d061b08f63c820b24b9030db76efb9a6cd5096ceabd28
+          useLoginAsID: false
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: 12a6d94647d122abf193
+          clientSecret: 2394e3a732fe4d9ecdc5717286937f9b13f26ef5
+
+  kustomize.version.v4.0.5: /custom-tools/kustomize_4_0_5
+  resource.compareoptions: |
+    ignoreAggregatedRoles: true
+  resource.customizations: |
+    admissionregistration.k8s.io/MutatingWebhookConfiguration:
+      ignoreDifferences: |
+        jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+        - /webhooks/1/clientConfig/caBundle
+        - /webhooks/2/clientConfig/caBundle
+    admissionregistration.k8s.io/ValidatingWebhookConfiguration:
+      ignoreDifferences: |
+        jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+        - /webhooks/1/clientConfig/caBundle
+        - /webhooks/0/failurePolicy
+    apiextensions.k8s.io/CustomResourceDefinition:
+      ignoreDifferences: |
+        jsonPointers:
+        - /spec/scope

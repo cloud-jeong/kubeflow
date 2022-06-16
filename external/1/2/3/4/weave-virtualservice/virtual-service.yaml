@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: weave
+spec:
+  gateways:
+    - kubeflow/kubeflow-gateway
+  hosts:
+    - "*"
+  http:
+    - match:
+        - uri:
+            prefix: /weave/
+      rewrite:
+        uri: "/"
+
+      route:
+        - destination:
+            host: weave-scope-app.weave.svc.cluster.local
+            port:
+              number: 80

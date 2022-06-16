@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: mlflow
+resources:
+  - namespace.yaml
+  - pgsql/pvc.yaml
+  - pgsql/secret.yaml
+  - pgsql/statefulset.yaml
+  - pgsql/service.yaml
+
+#pgadmin
+  - pgadmin/secret.yaml
+  - pgadmin/deployment.yaml
+  - pgadmin/service.yaml
+
+#tracking
+  - tracking/pvc.yaml
+  - tracking/deployment.yaml
+  - tracking/service.yaml
+
+#notebook
+#  - notebook/pvc.yaml
+  - notebook/deployment.yaml
+  - notebook/service.yaml
+
+#notebook
+#  - notebook/pvc.yaml
+  - predict/deployment.yaml
+  - predict/service.yaml
+
+
+#  - virtual-service.yaml
+#images:
+#  - name: docker.io/kubeflowkatib/katib-controller
+#    newTag: v0.11.0
+#    newName: docker.io/kubeflowkatib/katib-controller
+#  - name: docker.io/kubeflowkatib/katib-db-manager
+#    newTag: v0.11.0
+#    newName: docker.io/kubeflowkatib/katib-db-manager
+#  - name: docker.io/kubeflowkatib/katib-ui
+#    newTag: v0.11.0
+#    newName: docker.io/kubeflowkatib/katib-ui
+#  - name: docker.io/kubeflowkatib/cert-generator
+#    newTag: v0.11.0
+#    newName: docker.io/kubeflowkatib/cert-generator
+#patchesStrategicMerge:
+#  - katib-config-patch.yaml
+
+configurations:
+  - params.yaml

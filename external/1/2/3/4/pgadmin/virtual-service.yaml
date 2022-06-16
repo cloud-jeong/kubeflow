@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: pgadmin
+spec:
+  gateways:
+    - kubeflow-gateway
+  hosts:
+    - "*"
+  http:
+    - match:
+        - uri:
+            prefix: /pgadmin/
+      headers:
+        request:
+          set:
+            X-Script-Name: /pgadmin
+      rewrite:
+        uri: "/pgadmin/"
+      route:
+        - destination:
+            host: pgadmin.kubeflow.svc.cluster.local
+            port:
+              number: 4888
